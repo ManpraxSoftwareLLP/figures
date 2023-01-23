@@ -26,6 +26,9 @@ from figures.pipeline.course_daily_metrics import CourseDailyMetricsLoader
 from figures.pipeline.site_daily_metrics import SiteDailyMetricsLoader
 from figures.pipeline.site_monthly_metrics import fill_month
 
+from pathlib import Path
+import logging
+
 # Backfill is done irregularly on an as-needed basis and not part of regularly
 # scheduled operations.
 # Default to a directory for which the edxapp user already has permissions
@@ -34,7 +37,11 @@ from figures.pipeline.site_monthly_metrics import fill_month
 # `/edx/var/log/figures`. However, the `/edx/var/log` directory does not have
 # write permission for the `edxapp` or `www-data` users, while `/edx/app/edxapp`
 # does. Therefore we initally declar the following to write backfill logs
-DEFAULT_FIGURES_BACKFILL_LOG_DIR = '/edx/app/edxapp/figures/logs/'
+DEFAULT_FIGURES_BACKFILL_LOG_DIR = os.path.join(os.path.expanduser('~'), 'logs/')
+
+Path(DEFAULT_FIGURES_BACKFILL_LOG_DIR).mkdir(parents=True, exist_ok=True)
+
+logger = logging.getLogger(__name__)
 
 
 class InvalidDataError(Exception):
@@ -49,8 +56,10 @@ class InvalidDataError(Exception):
 def figures_backfill_log_dir():
     """Specify where to write Figures backfill log files
     """
-    return settings.ENV_TOKENS['FIGURES'].get('BACKFILL_LOG_DIR',
-                                              DEFAULT_FIGURES_BACKFILL_LOG_DIR)
+    try:
+        return settings.FIGURES_LOG_DIR
+    except:
+        return DEFAULT_FIGURES_BACKFILL_LOG_DIR
 
 
 # This function called just by mgmt command, backfill_figures_monthly_metrics.py
@@ -205,6 +214,7 @@ def backfill_daily_metrics_for_site_and_date(site,
 
     if logdir is None:
         logdir = figures_backfill_log_dir()
+    logger.info(f"Figures log dir set to {logdir}")
 
     filename = 'backfill-for-site-{site_id}-date-{date_for}.log'.format(
         site_id=site.id, date_for=date_for_str)

@@ -88,7 +88,7 @@ def default_site():
     behavior for getting the current site.
     """
     if getattr(settings, 'SITE_ID', ''):
-        return Site.objects.get(pk=settings.SITE_ID)
+        return Site.objects.get(domain=settings.SITE_DOMAIN)
 
     return None
 
