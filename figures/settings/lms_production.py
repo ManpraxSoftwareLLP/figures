@@ -99,9 +99,8 @@ def update_celery_routes(platform_settings, figures_env_tokens, celery_tasks_que
     """
     https://docs.celeryproject.org/en/3.1/userguide/routing.html#manual-routing
     """
-    if figures_env_tokens.get('FIGURES_PIPELINE_TASKS_ROUTING_KEY', False):
-        figures_router = FiguresRouter(celery_tasks_queue)
-        platform_settings.CELERY_ROUTES = (platform_settings.CELERY_ROUTES, figures_router)
+    figures_router = FiguresRouter(celery_tasks_queue)
+    platform_settings.CELERY_ROUTES = (platform_settings.CELERY_ROUTES, figures_router)
 
 
 def plugin_settings(settings):
