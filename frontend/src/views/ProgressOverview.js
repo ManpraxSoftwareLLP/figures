@@ -191,6 +191,11 @@ class ProgressOverview extends Component {
       singleRecord['email'] = user['email'];
       singleRecord['username'] = user['username'];
       singleRecord['date_joined'] = user['date_joined'];
+      singleRecord['state'] = user['profile']['state'];
+      singleRecord['phone_number'] = user['profile']['phone_number'];
+      singleRecord['city'] = user['profile']['city'];
+      singleRecord['school'] = user['profile']['school'];
+
 
       const coursesFilter = this.state.selectedCourses.length ? this.state.selectedCourses : this.state.coursesFilterOptions;
       const userCoursesImmutable = Immutable.fromJS(user['enrollmentdata_set']);
@@ -295,6 +300,26 @@ class ProgressOverview extends Component {
           <div className={styles['email']}>
             <span className={styles['user-info-value']}>
               {user['email']}
+            </span>
+          </div>
+          <div className={styles['state']}>
+            <span className={styles['user-info-value']}>
+              {user['profile']['state']}
+            </span>
+          </div>
+          <div className={styles['phone-number']}>
+            <span className={styles['user-info-value']}>
+              {user['profile']['phone_number']}
+            </span>
+          </div>
+          <div className={styles['city']}>
+            <span className={styles['user-info-value']}>
+              {user['profile']['city']}
+            </span>
+          </div>
+          <div className={styles['school']}>
+            <span className={styles['user-info-value']}>
+              {user['profile']['school']}
             </span>
           </div>
           {userCoursesRender}
@@ -434,6 +459,70 @@ class ProgressOverview extends Component {
                         {(this.state.ordering === 'email') ? (
                           <FontAwesomeIcon icon={faAngleDoubleUp} />
                         ) : (this.state.ordering === '-email') ? (
+                          <FontAwesomeIcon icon={faAngleDoubleDown} />
+                        ) : ''}
+                      </button>
+                    </div>
+                    {/* singleRecord['state'] = user['profile']['state'];
+      singleRecord['phone_number'] = user['profile']['phone_number'];
+      singleRecord['city'] = user['profile']['city'];
+      singleRecord['school'] = user['profile']['school']; */}
+                    <div className={styles['state']}>
+                      <button
+                        className={styles['sorting-header-button']}
+                        onClick={() => (this.state.ordering !== 'state') ? this.setOrdering('state') : this.setOrdering('-state')}
+                      >
+                        <span>
+                          State
+                        </span>
+                        {(this.state.ordering === 'state') ? (
+                          <FontAwesomeIcon icon={faAngleDoubleUp} />
+                        ) : (this.state.ordering === '-state') ? (
+                          <FontAwesomeIcon icon={faAngleDoubleDown} />
+                        ) : ''}
+                      </button>
+                    </div>
+                    <div className={styles['phone-number']}>
+                      <button
+                        className={styles['sorting-header-button']}
+                        onClick={() => (this.state.ordering !== 'phone_number') ? this.setOrdering('phone_number') : this.setOrdering('-phone_number')}
+                      >
+                        <span>
+                          phone_number
+                        </span>
+                        {(this.state.ordering === 'phone_number') ? (
+                          <FontAwesomeIcon icon={faAngleDoubleUp} />
+                        ) : (this.state.ordering === '-phone_number') ? (
+                          <FontAwesomeIcon icon={faAngleDoubleDown} />
+                        ) : ''}
+                      </button>
+                    </div>
+                    <div className={styles['city']}>
+                      <button
+                        className={styles['sorting-header-button']}
+                        onClick={() => (this.state.ordering !== 'city') ? this.setOrdering('city') : this.setOrdering('-city')}
+                      >
+                        <span>
+                          city
+                        </span>
+                        {(this.state.ordering === 'city') ? (
+                          <FontAwesomeIcon icon={faAngleDoubleUp} />
+                        ) : (this.state.ordering === '-city') ? (
+                          <FontAwesomeIcon icon={faAngleDoubleDown} />
+                        ) : ''}
+                      </button>
+                    </div>
+                    <div className={styles['school']}>
+                      <button
+                        className={styles['sorting-header-button']}
+                        onClick={() => (this.state.ordering !== 'school') ? this.setOrdering('school') : this.setOrdering('-school')}
+                      >
+                        <span>
+                          school
+                        </span>
+                        {(this.state.ordering === 'school') ? (
+                          <FontAwesomeIcon icon={faAngleDoubleUp} />
+                        ) : (this.state.ordering === '-school') ? (
                           <FontAwesomeIcon icon={faAngleDoubleDown} />
                         ) : ''}
                       </button>

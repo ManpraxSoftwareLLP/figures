@@ -87,6 +87,22 @@ class SingleUserContent extends Component {
                 <span className={styles['value']}>{genderDict[this.state.userData.getIn(['gender'])]}</span>
               </li>
               <li>
+                <span className={styles['label']}>Mobile Number:</span>
+                <span className={styles['value']}>{this.state.userData.getIn(['mobile_number'])}</span>
+              </li>
+              <li>
+                <span className={styles['label']}>State:</span>
+                <span className={styles['value']}>{this.state.userData.getIn(['state'])}</span>
+              </li>
+              <li>
+                <span className={styles['label']}>City:</span>
+                <span className={styles['value']}>{this.state.userData.getIn(['city'])}</span>
+              </li>
+              <li>
+                <span className={styles['label']}>DOB:</span>
+                <span className={styles['value']}>{this.state.userData.getIn(['dob'])}</span>
+              </li>
+              <li>
                 <span className={styles['label']}>Date joined:</span>
                 <span className={styles['value']}>{dateJoined.toUTCString()}</span>
               </li>

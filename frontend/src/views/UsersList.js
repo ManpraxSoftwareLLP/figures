@@ -123,6 +123,61 @@ class UsersList extends Component {
               </div>
             </div>
           </div>
+
+          <div className={styles['mobile-number']}>
+            <div className={styles['in-cell-label-value']}>
+              <div className={styles['mobile-label']}>
+                Mobile Number:
+              </div>
+              <div className={styles['mobile-value']}>
+                {user['mobile_number']}
+              </div>
+            </div>
+          </div>
+
+          {/* <div className={styles['gender']}>
+            <div className={styles['in-cell-label-value']}>
+              <div className={styles['mobile-label']}>
+                Gender:
+              </div>
+              <div className={styles['mobile-value']}>
+                {user['gender']}
+              </div>
+            </div>
+          </div> */}
+
+          <div className={styles['state']}>
+            <div className={styles['in-cell-label-value']}>
+              <div className={styles['mobile-label']}>
+                State:
+              </div>
+              <div className={styles['mobile-value']}>
+                {user['state']}
+              </div>
+            </div>
+          </div>
+
+          <div className={styles['city']}>
+            <div className={styles['in-cell-label-value']}>
+              <div className={styles['mobile-label']}>
+                City:
+              </div>
+              <div className={styles['mobile-value']}>
+                {user['city']}
+              </div>
+            </div>
+          </div>
+
+          <div className={styles['dob']}>
+            <div className={styles['in-cell-label-value']}>
+              <div className={styles['mobile-label']}>
+                DOB:
+              </div>
+              <div className={styles['mobile-value']}>
+                {user['dob']}
+              </div>
+            </div>
+          </div>
           <div className={styles['is-active']}>
             <div className={styles['in-cell-label-value']}>
               <div className={styles['mobile-label']}>
@@ -215,6 +270,86 @@ class UsersList extends Component {
                   {(this.state.ordering === 'username') ? (
                     <FontAwesomeIcon icon={faAngleDoubleUp} />
                   ) : (this.state.ordering === '-username') ? (
+                    <FontAwesomeIcon icon={faAngleDoubleDown} />
+                  ) : ''}
+                </button>
+              </div>
+
+              <div className={styles['mobile-number']}>
+                <button
+                  className={styles['sorting-header-button']}
+                  onClick={() => (this.state.ordering !== 'mobile_number') ? this.setOrdering('mobile_number') : this.setOrdering('-mobile_number')}
+                >
+                  <span>
+                  Mobile Number
+                  </span>
+                  {(this.state.ordering === 'mobile_number') ? (
+                    <FontAwesomeIcon icon={faAngleDoubleUp} />
+                  ) : (this.state.ordering === '-mobile_number') ? (
+                    <FontAwesomeIcon icon={faAngleDoubleDown} />
+                  ) : ''}
+                </button>
+              </div>
+
+              {/* <div className={styles['gender']}>
+                <button
+                  className={styles['sorting-header-button']}
+                  onClick={() => (this.state.ordering !== 'gender') ? this.setOrdering('gender') : this.setOrdering('-gender')}
+                >
+                  <span>
+                    Gender
+                  </span>
+                  {(this.state.ordering === 'gender') ? (
+                    <FontAwesomeIcon icon={faAngleDoubleUp} />
+                  ) : (this.state.ordering === '-gender') ? (
+                    <FontAwesomeIcon icon={faAngleDoubleDown} />
+                  ) : ''}
+                </button>
+              </div> */}
+
+              <div className={styles['state']}>
+                <button
+                  className={styles['sorting-header-button']}
+                  onClick={() => (this.state.ordering !== 'state') ? this.setOrdering('state') : this.setOrdering('-state')}
+                >
+                  <span>
+                    State
+                  </span>
+                  {(this.state.ordering === 'state') ? (
+                    <FontAwesomeIcon icon={faAngleDoubleUp} />
+                  ) : (this.state.ordering === '-state') ? (
+                    <FontAwesomeIcon icon={faAngleDoubleDown} />
+                  ) : ''}
+                </button>
+              </div>
+
+              <div className={styles['city']}>
+                <button
+                  className={styles['sorting-header-button']}
+                  onClick={() => (this.state.ordering !== 'city') ? this.setOrdering('city') : this.setOrdering('-city')}
+                >
+                  <span>
+                    City
+                  </span>
+                  {(this.state.ordering === 'city') ? (
+                    <FontAwesomeIcon icon={faAngleDoubleUp} />
+                  ) : (this.state.ordering === '-city') ? (
+                    <FontAwesomeIcon icon={faAngleDoubleDown} />
+                  ) : ''}
+                </button>
+              </div>
+
+              <div className={styles['dob']}>
+                <button
+                  className={styles['sorting-header-button']}
+                  onClick={() => (this.state.ordering !== 'dob') ? this.setOrdering('dob') : this.setOrdering('-dob')}
+                >
+                  <span>
+                    DOB
+                  </span>
+                  {(this.state.ordering === 'dob') ? (
+                    <FontAwesomeIcon icon={faAngleDoubleUp} />
+                  ) : (this.state.ordering === '-dob') ? (
                     <FontAwesomeIcon icon={faAngleDoubleDown} />
                   ) : ''}
                 </button>

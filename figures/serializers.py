@@ -51,8 +51,9 @@ from figures.models import (
     LearnerCourseGradeMetrics,
     PipelineError,
     )
-from figures.pipeline.logger import log_error
+from figures.pipeline.logger import log_error, default_logger
 import figures.sites
+from mx_accounts.models import CustomUserProfile
 
 
 # Temporarily hardcoding here
@@ -508,6 +509,10 @@ class GeneralUserDataSerializer(serializers.Serializer):
         allow_blank=True,
         required=False,
         read_only=True)
+    dob = serializers.SerializerMethodField()
+    state = serializers.SerializerMethodField()
+    city = serializers.SerializerMethodField()
+    mobile_number = serializers.SerializerMethodField()
 
     language_proficiencies = serializers.SerializerMethodField()
     courses = serializers.SerializerMethodField()
@@ -527,6 +532,29 @@ class GeneralUserDataSerializer(serializers.Serializer):
 
         return [CourseOverviewSerializer(data).data for data in course_overviews]
 
+    def get_dob(self, user):
+        try:
+            return CustomUserProfile.objects.get(user_id=user.id).dob
+        except:
+            return ''
+
+    def get_state(self, user):
+        try:
+            return CustomUserProfile.objects.get(user_id=user.id).state
+        except:
+            return ''
+
+    def get_city(self, user):
+        try:
+            return CustomUserProfile.objects.get(user_id=user.id).city
+        except:
+            return ''
+
+    def get_mobile_number(self, user):
+        try:
+            return CustomUserProfile.objects.get(user_id=user.id).mobile_number
+        except:
+            return ''
 
 class UserDemographicSerializer(serializers.Serializer):
     country = SerializeableCountryField(
@@ -693,6 +721,10 @@ class LearnerDetailsSerializer(serializers.ModelSerializer):
         source='profile.level_of_education',
         allow_blank=True, required=False,)
     bio = serializers.CharField(source='profile.bio', required=False)
+    dob = serializers.SerializerMethodField()
+    state = serializers.SerializerMethodField()
+    city = serializers.SerializerMethodField()
+    mobile_number = serializers.SerializerMethodField()
 
     # We may want to exclude this unless we want to show
     # profile images in Figures
@@ -710,7 +742,8 @@ class LearnerDetailsSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'username', 'name', 'email', 'country', 'is_active',
             'year_of_birth', 'level_of_education', 'gender', 'date_joined',
-            'bio', 'courses', 'language_proficiencies', 'profile_image',
+            'bio', 'courses', 'language_proficiencies', 'profile_image', 'dob',
+            'state', 'city', 'mobile_number'
             )
         read_only_fields = fields
 
@@ -737,6 +770,30 @@ class LearnerDetailsSerializer(serializers.ModelSerializer):
                             user.profile, user, None)
         else:
             return None
+    
+    def get_dob(self, user):
+        try:
+            return CustomUserProfile.objects.get(user_id=user.id).dob
+        except:
+            return ''
+
+    def get_state(self, user):
+        try:
+            return CustomUserProfile.objects.get(user_id=user.id).state
+        except:
+            return ''
+
+    def get_city(self, user):
+        try:
+            return CustomUserProfile.objects.get(user_id=user.id).city
+        except:
+            return ''
+
+    def get_mobile_number(self, user):
+        try:
+            return CustomUserProfile.objects.get(user_id=user.id).mobile_number
+        except:
+            return ''
 
 
 class CourseMauMetricsSerializer(serializers.ModelSerializer):
@@ -912,9 +969,27 @@ class EnrollmentDataSerializer(serializers.ModelSerializer):
 class LearnerMetricsSerializerV2(serializers.ModelSerializer):
     fullname = serializers.CharField(source='profile.name', default=None)
     enrollmentdata_set = EnrollmentDataSerializer(many=True, read_only=True)
-
+    profile = serializers.SerializerMethodField()
+    
     class Meta:
         model = get_user_model()
         fields = ('id', 'username', 'email', 'fullname', 'is_active',
-                  'date_joined', 'enrollmentdata_set')
+                  'date_joined', 'enrollmentdata_set', 'profile')
         read_only_fields = fields
+
+    def get_profile(self, obj):
+        profile = dict([('state', ""), ('phone_number', ""),
+                       ('city', ""), ('school', "")])
+        try:
+            customprofile_obj = CustomUserProfile.objects.get(user_id=obj.id)
+            if customprofile_obj.state:
+                profile['state'] = customprofile_obj.state
+            if customprofile_obj.phone_number:
+                profile['phone_number'] = customprofile_obj.phone_number
+            if customprofile_obj.city:
+                profile['city'] = customprofile_obj.city
+            if customprofile_obj.school:
+                profile['school'] = customprofile_obj.school
+        except Exception as e:
+            default_logger.error(e)
+        return profile

@@ -15,7 +15,7 @@
 
 .user-list-item {
   display: grid;
-  grid-template-columns: 2fr 2fr 1fr 1fr 1fr 2fr;
+  grid-template-columns: 2fr 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
   grid-column-gap: calcRem(20);
   border-bottom: 1px solid #ccc;
   padding: calcRem(20) 0;
@@ -42,6 +42,7 @@
       margin-right: calcRem(5);
       text-decoration: underline;
       font-size: calcRem(12);
+      color: black;
     }
 
     &:hover, &:focus {
@@ -59,7 +60,7 @@
 
   }
 
-  .is-active, .number-of-courses, .date-joined {
+  .is-active, .number-of-courses, .date-joined, .mobile-number, .gender, .state, .city, .dob {
     text-align: center;
 
     @media (max-width: $half-screen-breakpoint) {
