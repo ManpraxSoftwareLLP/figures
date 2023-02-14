@@ -343,7 +343,7 @@ class GeneralUserDataViewSet(CommonAuthMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = GeneralUserDataSerializer
     filter_backends = (SearchFilter, DjangoFilterBackend, OrderingFilter)
     filter_class = UserFilterSet
-    search_fields = ['username', 'email', 'profile__name']
+    search_fields = ['username', 'email', 'profile__name','profile__customuserprofile__mobile_number']
     ordering_fields = ['username', 'email', 'profile__name', 'is_active', 'date_joined']
 
     def get_queryset(self):

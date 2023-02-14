@@ -231,7 +231,7 @@ class UsersList extends Component {
         <div className={cx({ 'container': true, 'users-content': true})}>
           <ListSearch
             valueChangeFunction={this.setSearchQuery}
-            inputPlaceholder='Search by users name, username or email...'
+            inputPlaceholder='Search by users name, username, email or mobile number...'
           />
           {this.state.pages ? (
             <Paginator
