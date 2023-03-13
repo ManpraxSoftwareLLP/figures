@@ -11,13 +11,20 @@
     grid-column-end: span 2;
   }
 
-  .header {
-    display: flex;
-    margin-bottom: calcRem(20);
-  }
-
-  .header-title {
-    font-weight: bold;
+    .header {
+      display: flex;
+      margin-bottom: calcRem(20);
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    .export-button {
+      width: 3%;
+      fill: #000000;
+    }
+  
+    .header-title {
+      font-weight: bold;
     font-size: calcRem(24);
     padding-left: calcRem(20);
     line-height: 100%;

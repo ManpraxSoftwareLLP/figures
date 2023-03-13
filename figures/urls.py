@@ -82,6 +82,11 @@ router.register(
     basename='courses-general')
 
 router.register(
+    r'export-courses-general',
+    views.ExportGeneralCourseDataViewSet,
+    basename='export-courses-general')
+
+router.register(
     r'courses-detail',
     views.CourseDetailsViewSet,
     basename='courses-detail')
@@ -92,9 +97,19 @@ router.register(
     basename='users-general')
 
 router.register(
+    r'export-users-general',
+    views.ExportGeneralUserDataViewSet,
+    basename='export-users-general')
+
+router.register(
     r'users-detail',
     views.LearnerDetailsViewSet,
     basename='users-detail')
+
+router.register(
+    r'export-users-detail',
+    views.ExportLearnerDetailsViewset,
+    basename='export-users-detail')
 
 # TODO: Consider changing this path to be 'users' or 'users/summary'
 # So that all user data fall under the same root path

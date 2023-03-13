@@ -8,6 +8,8 @@ import styles from './_course-learners-list.scss';
 import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import apiConfig from '../../apiConfig';
+import CsvDownloadIcon from '../../images/icons/CsvDownloadIcon';
 
 let cx = classNames.bind(styles);
 
@@ -67,6 +69,9 @@ class CourseLearnersList extends Component {
         <div className={styles['header']}>
           <div className={styles['header-title']}>
             {this.props.listTitle}
+          </div>
+          <div className={styles['export-button']} onClick={() => window.location.href = `${apiConfig.ExportLearnersDetailed}?enrolled_in_course_id=${this.props.courseId}`}>
+            <CsvDownloadIcon />
           </div>
         </div>
         <div className={cx({ 'stat-card': true, 'span-2': false, 'span-3': false, 'span-4': true, 'learners-table-container': true})}>

@@ -91,7 +91,8 @@ from figures.mau import (
     retrieve_live_course_mau_data,
     retrieve_live_site_mau_data,
 )
-
+from django.http import HttpResponse
+import csv
 
 UNAUTHORIZED_USER_REDIRECT_URL = '/'
 
@@ -219,6 +220,34 @@ class GeneralCourseDataViewSet(CourseOverviewViewSet):
     search_fields = ['display_name', 'id']
     ordering_fields = ['display_name', 'self_paced', 'date_joined']
 
+class ExportGeneralCourseDataViewSet(GeneralCourseDataViewSet):
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        csv_data=list()
+        response=HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment;filename=courses_data{}.csv'.format(datetime.now().strftime('%d_%m_%Y %H_%M'))
+        writer = csv.writer(response)
+        writer.writerow(("Course name",
+        "Course ID",
+        "Course Start",
+        "Self paced",
+        "Enrolments",
+        "Completions",
+        ))
+        for course in serializer.data:
+            row = (course.get('course_name','-'),
+                   course.get('course_id','-'),
+                   course.get('start_date').strftime('%d_%m_%Y') if course.get('start_date') else '-',
+                   course.get('self_paced','-'),
+                   course.get('metrics',dict()).get('enrollment_count','-'),
+                   course.get('metrics',dict()).get('num_learners_completed','-'),)
+            csv_data.append(row)
+        writer.writerows(csv_data)
+        return response
+
+    def retrieve(self, request, *args, **kwargs):
+        pass
 
 class CourseDetailsViewSet(CommonAuthMixin, viewsets.ReadOnlyModelViewSet):
     """Detailed course data
@@ -351,6 +380,40 @@ class GeneralUserDataViewSet(CommonAuthMixin, viewsets.ReadOnlyModelViewSet):
         queryset = figures.sites.get_users_for_site(site)
         return queryset
 
+class ExportGeneralUserDataViewSet(GeneralUserDataViewSet):
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        csv_data=list()
+        response=HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment;filename=users_data{}.csv'.format(datetime.now().strftime('%d_%m_%Y %H_%M'))
+        writer = csv.writer(response)
+        writer.writerow(("Full Name",
+        "Username",
+        "Mobile Number",
+        "State",
+        "City",
+        "DOB",
+        "Is Activated",
+        "Date Joined",
+        "Courses Enrolled In",
+        ))
+        for user in serializer.data:
+            row = (user.get('fullname', '-'),
+                   user.get('username', '-'),
+                   user.get('mobile_number', '-'),
+                   user.get('state'),
+                   user.get('city'),
+                   user.get('dob'),
+                   user.get('is_active','-'),
+                   user.get('date_joined','-'),
+                   len(user.get('courses',[])))
+            csv_data.append(row)
+        writer.writerows(csv_data)
+        return response
+
+    def retrieve(self,request):
+        pass
 
 class LearnerDetailsViewSet(CommonAuthMixin, viewsets.ReadOnlyModelViewSet):
     model = get_user_model()
@@ -369,6 +432,41 @@ class LearnerDetailsViewSet(CommonAuthMixin, viewsets.ReadOnlyModelViewSet):
         context['site'] = figures.sites.get_requested_site(self.request)
         return context
 
+class ExportLearnerDetailsViewset(LearnerDetailsViewSet):
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        csv_data=list()
+        response=HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment;filename={}.csv'.format(request.query_params.get('enrolled_in_course_id').replace(' ','+'))
+        writer = csv.writer(response)
+        writer.writerow(("Learner",
+        "Country",
+        "Date enrolled",
+        "Course progress",
+        "Course completed",
+        "Date completed",
+        ))
+        for user in serializer.data:
+            courseData = [course for course in user['courses'] 
+                                    if course.get('course_id')==request.query_params.get('enrolled_in_course_id').replace(' ','+')][0]
+            row = (user.get('name', '-'),
+                   user.get('country', 'ND'),
+                   courseData.get('date_enrolled', '-'),
+                   courseData.get('progress_data', dict()).get('course_progress', '-'),
+                   'Yes' if bool(courseData.get('progress_data', dict()
+                                                ).get('course_completed')) else 'No',
+                   courseData.get('progress_data', dict()).get('course_completed') if courseData.get(
+                       'progress_data', dict()).get('course_completed') else '-',
+                   courseData.get('progress_data', dict()).get('asmt_reviewed_date') if courseData.get(
+                       'progress_data', dict()).get('asmt_reviewed_date') else '-',
+                   )
+            csv_data.append(row)
+        writer.writerows(csv_data)
+        return response
+    
+    def retrieve(self,request):
+        pass
 
 class LearnerMetricsViewSetV1(CommonAuthMixin, viewsets.ReadOnlyModelViewSet):
     """Provides user identity and nested enrollment data

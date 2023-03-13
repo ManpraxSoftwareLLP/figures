@@ -11,6 +11,9 @@ const apiConfig = {
   reportingCsvReportsApi: '/reporting/api/csv-reports/',
   coursesIndex: '/figures/api/courses-index/',
   learnerMetrics: '/figures/api/learner-metrics/',
+  ExportLearnersGeneral: '/figures/api/export-users-general/',
+  ExportLearnersDetailed: '/figures/api/export-users-detail/',
+  ExportCoursesGeneral: '/figures/api/export-courses-general/',
 }
 
 export default apiConfig;

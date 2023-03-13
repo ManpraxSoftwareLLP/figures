@@ -13,6 +13,11 @@
   border-top: 1px solid #ccc;
 }
 
+.export-button {
+  width: 3%;
+  fill: #000000;
+  margin-left: 97%
+}
 .user-list-item {
   display: grid;
   grid-template-columns: 2fr 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;

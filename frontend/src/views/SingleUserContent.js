@@ -79,10 +79,6 @@ class SingleUserContent extends Component {
                 <span className={styles['value']}>{this.state.userData.getIn(['username'])}</span>
               </li>
               <li>
-                <span className={styles['label']}>Year of birth:</span>
-                <span className={styles['value']}>{this.state.userData.getIn(['year_of_birth'])}</span>
-              </li>
-              <li>
                 <span className={styles['label']}>Gender:</span>
                 <span className={styles['value']}>{genderDict[this.state.userData.getIn(['gender'])]}</span>
               </li>
