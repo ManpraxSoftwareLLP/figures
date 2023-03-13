@@ -17,10 +17,14 @@
       justify-content: space-between;
       align-items: center;
     }
-  
-    .export-button {
-      width: 3%;
-      fill: #000000;
+    .export-csv-button {
+      color: #fff;
+      background-color: #0090c1 !important;
+      border-radius: 50px;
+      font-size: 0.875rem;
+      margin: 0;
+      text-align: center;
+      padding: 0.9375rem 1.875rem;
     }
   
     .header-title {

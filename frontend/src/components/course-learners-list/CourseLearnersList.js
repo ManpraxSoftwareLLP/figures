@@ -70,9 +70,7 @@ class CourseLearnersList extends Component {
           <div className={styles['header-title']}>
             {this.props.listTitle}
           </div>
-          <div className={styles['export-button']} onClick={() => window.location.href = `${apiConfig.ExportLearnersDetailed}?enrolled_in_course_id=${this.props.courseId}`}>
-            <CsvDownloadIcon />
-          </div>
+            <button class={styles['export-csv-button']} onClick={() => window.location.href = `${apiConfig.ExportLearnersDetailed}?enrolled_in_course_id=${this.props.courseId}`}>Generate a CSV from Current View</button>
         </div>
         <div className={cx({ 'stat-card': true, 'span-2': false, 'span-3': false, 'span-4': true, 'learners-table-container': true})}>
           <ul className={styles['learners-table']}>

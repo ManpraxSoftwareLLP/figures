@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faAngleDoubleUp, faAngleDoubleDown } from '@fortawesome/free-solid-svg-icons';
 
 import classNames from 'classnames/bind';
-import CsvDownloadIcon from '../images/icons/CsvDownloadIcon';
+
 let cx = classNames.bind(styles);
 
 const parseCourseDate = (fetchedDate) => {
@@ -216,9 +216,7 @@ class CoursesList extends Component {
             valueChangeFunction={this.setSearchQuery}
             inputPlaceholder='Search by course name, code or ID...'
           />
-          <div className={styles['export-button']} onClick={() => window.location.href = `${apiConfig.ExportCoursesGeneral}`}>
-            <CsvDownloadIcon />
-          </div>
+            <button class={styles['export-csv-button']} onClick={() => window.location.href = `${apiConfig.ExportCoursesGeneral}`}>Generate a CSV from Current View</button>
           {this.state.pages ? (
             <Paginator
               pageSwitchFunction={this.getCourses}
