@@ -9,7 +9,6 @@ import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import apiConfig from '../../apiConfig';
-import CsvDownloadIcon from '../../images/icons/CsvDownloadIcon';
 
 let cx = classNames.bind(styles);
 
