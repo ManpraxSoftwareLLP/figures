@@ -238,7 +238,7 @@ class ExportGeneralCourseDataViewSet(GeneralCourseDataViewSet):
         for course in serializer.data:
             row = (course.get('course_name','-'),
                    course.get('course_id','-'),
-                   course.get('start_date').strftime('%d_%m_%Y') if course.get('start_date') else '-',
+                   course.get('start_date').split('T')[0] if course.get('start_date') else '-',
                    course.get('self_paced','-'),
                    course.get('metrics',dict()).get('enrollment_count','-'),
                    course.get('metrics',dict()).get('num_learners_completed','-'),)
