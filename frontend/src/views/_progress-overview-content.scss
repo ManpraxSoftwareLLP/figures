@@ -85,19 +85,6 @@
     align-items: center;
   }
 
-  .city {
-    width: calcRem(200);
-    font-size: calcRem(13);
-    flex-grow: 0;
-    flex-shrink: 0;
-    padding-left: calcRem(15);
-    padding-right: calcRem(15);
-    padding-top: calcRem(20);
-    padding-bottom: calcRem(20);
-    display: flex;
-    align-items: center;
-  }
-
   .school {
     width: calcRem(200);
     font-size: calcRem(13);
@@ -183,7 +170,7 @@
 
   &:nth-child(even) {
 
-    .user-fullname, .username, .email, .single-course-progress {
+    .user-fullname, .username, .email, .single-course-progress, .state, .phone-number, .school {
       background-color: #eee;
     }
   }
@@ -206,6 +193,7 @@
     background: none;
     border: none;
     outline: none;
+    color: black;
 
     span {
       margin-right: calcRem(5);
