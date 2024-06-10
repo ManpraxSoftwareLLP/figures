@@ -35,7 +35,12 @@ from figures.pipeline.enrollment_metrics_next import (
     update_enrollment_data_for_course,
     stale_course_enrollments,
 )
-
+from django.core.cache import cache
+import csv
+import os
+from pathlib import Path
+import boto3
+from django.conf import settings
 
 logger = get_task_logger(__name__)
 
@@ -521,3 +526,86 @@ def run_figures_monthly_metrics():
         # running standalone, single site, no need to delay subtask
         logger.info(msg.format('standalone'))
         populate_monthly_metrics_for_site(default_site().id)
+
+
+@shared_task
+def generate_course_csv(course_data):
+    logger.info("Course csv file generating")
+    cache.set("course_csv_status", 'pending', None)
+    fileDir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    filename= fileDir +'/course_data/course_data{}.csv'.format(datetime.datetime.utcnow().strftime("%d_%m_%Y_%H_%M_%S"))
+    Path("/".join(filename.split("/")[:-1])).mkdir(parents=True, exist_ok=True)
+    file_name = filename.split("/")[-1]
+    cache.set("course_csv_file", file_name, None)
+    csvFieldNames = (
+        "Course name",
+        "Course ID",
+        "Course Start",
+        "Self paced",
+        "Enrolments",
+        "Completions"
+    )
+    logger.info("AAAAAAAAAAAAAAAAAAAAAAAA543")
+    with open(filename, 'w') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerow(csvFieldNames)
+        for course in course_data:
+            row = (
+               course.get('course_name','-'),
+                course.get('course_id','-'),
+                course.get('start_date').split('T')[0] if course.get('start_date') else '-',
+                course.get('self_paced','-'),
+                course.get('metrics',dict()).get('enrollment_count','-'),
+                course.get('metrics',dict()).get('num_learners_completed','-')
+            )
+            writer.writerow(row)
+    s3 = boto3.client("s3",aws_access_key_id=settings.AWS_ACCESS_KEY_ID,aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+    s3.upload_file(filename,settings.AWS_STORAGE_BUCKET_NAME, "csv/"+file_name)
+    cache.set('course_csv_status', 'done', None)
+    logger.info("csv file name store in cache {}".format(file_name))
+    os.remove(filename)
+    
+    
+@shared_task
+def generate_usergeneral_csv(users_data):
+    logger.info("usergeneralinfo csv file generating")
+    cache.set("user_csv_status", "pending", None)
+    fileDir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    filename= fileDir +'/individual_course_report/users_data{}.csv'.format(datetime.datetime.utcnow().strftime("%d_%m_%Y_%H_%M_%S"))
+    Path("/".join(filename.split("/")[:-1])).mkdir(parents=True, exist_ok=True)
+    file_name = filename.split("/")[-1]
+    cache.set("user_csv_file", file_name, None)
+    
+    csvFieldNames = (
+            "Full Name",
+        "Username",
+        "Mobile Number",
+        "State",
+        "City",
+        "DOB",
+        "Is Activated",
+        "Date Joined",
+        "Courses Enrolled In",
+        )
+    logger.info("AAAAAAAAAAAAAAAAAAAAAAAA---590")
+    with open(filename, 'w') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerow(csvFieldNames)
+        for user in users_data:
+            row = (
+                    user.get('fullname', '-'),
+                   user.get('username', '-'),
+                   user.get('mobile_number', '-'),
+                   user.get('state'),
+                   user.get('city'),
+                   user.get('dob'),
+                   user.get('is_active','-'),
+                   user.get('date_joined','-'),
+                   len(user.get('courses',[]))
+            )
+            writer.writerow(row)
+    s3 = boto3.client("s3",aws_access_key_id=settings.AWS_ACCESS_KEY_ID,aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+    s3.upload_file(filename,settings.AWS_STORAGE_BUCKET_NAME, "csv/"+file_name)
+    cache.set("user_csv_status", "done", None)
+    os.remove(filename)
+    logger.info("csv file name store in cache {}".format(file_name))

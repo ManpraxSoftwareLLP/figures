@@ -27,6 +27,8 @@ class UsersList extends Component {
       currentPage: 1,
       searchQuery: '',
       ordering: 'profile__name',
+      downloadUrl: '',
+      downloadText: 'Generate a CSV from Current View',
     };
 
     this.getUsers = this.getUsers.bind(this);
@@ -93,6 +95,64 @@ class UsersList extends Component {
   componentDidMount() {
     this.getUsers();
   }
+
+  getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = (cookies[i]).trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+      downloadCSV = () => {
+        this.setState({
+            downloadText: "Generating ...",
+            downloadUrl: '',
+        })
+        var rootUrl = apiConfig.ExportLearnersGeneral;
+
+        fetch(rootUrl, {
+            credentials: "same-origin",
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': this.getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(json=>{
+                if(json['status'] == 200){
+                  console.log("AAAAAAAAAAAAAAAAAAAAAAA")
+                    setTimeout(this.getUserFiles(), 10000)
+                }
+            })
+    };
+
+    getUserFiles = () => {
+        var rootUrl = `/figures/api/user_csv_files`;
+        fetch((rootUrl))
+            .then(response => response.json())
+            .then(json => {
+                if (json['status'] == 200) {
+                    if (json['file_url'] != '') {
+                        this.setState({
+                            downloadUrl: json['file_url'],
+                            fileStatus:json['file_status']
+                        })
+                    }
+                    if(json['file_status'] == 'pending'){
+                        setTimeout(this.getUserFiles(), 10000)
+                    }
+                }
+            })
+    };
 
   render() {
 
@@ -234,7 +294,13 @@ class UsersList extends Component {
             valueChangeFunction={this.setSearchQuery}
             inputPlaceholder='Search by users name, username, email or mobile number...'
           />
-            <button class={styles['export-csv-button']} onClick={() => window.location.href = `${apiConfig.ExportLearnersGeneral}`}>Generate a CSV from Current View</button>
+            {this.state.downloadUrl == '' && this.state.fileStatus !='pending' ?
+                            <button class={styles['export-csv-button']} onClick={this.state.downloadText != 'Generating ...'?this.downloadCSV:''}> {this.state.downloadText}</button> : this.state.fileStatus == 'pending'?
+                        <button class={styles['export-csv-button']} disabled>Generating ...</button>
+                                :
+                                <button class={styles['export-csv-button']}  onClick={() => window.open(this.state.downloadUrl, "_self")}>Download</button>
+                            }
+          
           {this.state.pages ? (
             <Paginator
               pageSwitchFunction={this.getUsers}
