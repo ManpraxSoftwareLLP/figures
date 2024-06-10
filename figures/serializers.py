@@ -978,16 +978,13 @@ class LearnerMetricsSerializerV2(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_profile(self, obj):
-        profile = dict([('state', ""), ('phone_number', ""),
-                       ('city', ""), ('school', "")])
+        profile = dict([('state', ""), ('phone_number', ""), ('school', "")])
         try:
             customprofile_obj = CustomUserProfile.objects.get(user_id=obj.id)
             if customprofile_obj.state:
                 profile['state'] = customprofile_obj.state
             if customprofile_obj.phone_number:
                 profile['phone_number'] = customprofile_obj.phone_number
-            if customprofile_obj.city:
-                profile['city'] = customprofile_obj.city
             if customprofile_obj.school:
                 profile['school'] = customprofile_obj.school
         except Exception as e:

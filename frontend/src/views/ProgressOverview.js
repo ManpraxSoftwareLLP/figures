@@ -193,7 +193,6 @@ class ProgressOverview extends Component {
       singleRecord['date_joined'] = user['date_joined'];
       singleRecord['state'] = user['profile']['state'];
       singleRecord['phone_number'] = user['profile']['phone_number'];
-      singleRecord['city'] = user['profile']['city'];
       singleRecord['school'] = user['profile']['school'];
 
 
@@ -310,11 +309,6 @@ class ProgressOverview extends Component {
           <div className={styles['phone-number']}>
             <span className={styles['user-info-value']}>
               {user['profile']['phone_number']}
-            </span>
-          </div>
-          <div className={styles['city']}>
-            <span className={styles['user-info-value']}>
-              {user['profile']['city']}
             </span>
           </div>
           <div className={styles['school']}>
@@ -493,21 +487,6 @@ class ProgressOverview extends Component {
                         {(this.state.ordering === 'phone_number') ? (
                           <FontAwesomeIcon icon={faAngleDoubleUp} />
                         ) : (this.state.ordering === '-phone_number') ? (
-                          <FontAwesomeIcon icon={faAngleDoubleDown} />
-                        ) : ''}
-                      </button>
-                    </div>
-                    <div className={styles['city']}>
-                      <button
-                        className={styles['sorting-header-button']}
-                        onClick={() => (this.state.ordering !== 'city') ? this.setOrdering('city') : this.setOrdering('-city')}
-                      >
-                        <span>
-                          city
-                        </span>
-                        {(this.state.ordering === 'city') ? (
-                          <FontAwesomeIcon icon={faAngleDoubleUp} />
-                        ) : (this.state.ordering === '-city') ? (
                           <FontAwesomeIcon icon={faAngleDoubleDown} />
                         ) : ''}
                       </button>
