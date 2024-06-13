@@ -93,6 +93,7 @@ from figures.mau import (
 )
 from django.http import HttpResponse
 import csv
+from figures.tasks import *
 
 UNAUTHORIZED_USER_REDIRECT_URL = '/'
 
@@ -224,27 +225,28 @@ class ExportGeneralCourseDataViewSet(GeneralCourseDataViewSet):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
-        csv_data=list()
-        response=HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment;filename=courses_data{}.csv'.format(datetime.now().strftime('%d_%m_%Y %H_%M'))
-        writer = csv.writer(response)
-        writer.writerow(("Course name",
-        "Course ID",
-        "Course Start",
-        "Self paced",
-        "Enrolments",
-        "Completions",
-        ))
-        for course in serializer.data:
-            row = (course.get('course_name','-'),
-                   course.get('course_id','-'),
-                   course.get('start_date').split('T')[0] if course.get('start_date') else '-',
-                   course.get('self_paced','-'),
-                   course.get('metrics',dict()).get('enrollment_count','-'),
-                   course.get('metrics',dict()).get('num_learners_completed','-'),)
-            csv_data.append(row)
-        writer.writerows(csv_data)
-        return response
+        # csv_data=list()
+        # response=HttpResponse(content_type='text/csv')
+        # response['Content-Disposition'] = 'attachment;filename=courses_data{}.csv'.format(datetime.now().strftime('%d_%m_%Y %H_%M'))
+        # writer = csv.writer(response)
+        # writer.writerow(("Course name",
+        # "Course ID",
+        # "Course Start",
+        # "Self paced",
+        # "Enrolments",
+        # "Completions",
+        # ))
+        # for course in serializer.data:
+        #     row = (course.get('course_name','-'),
+        #            course.get('course_id','-'),
+        #            course.get('start_date').split('T')[0] if course.get('start_date') else '-',
+        #            course.get('self_paced','-'),
+        #            course.get('metrics',dict()).get('enrollment_count','-'),
+        #            course.get('metrics',dict()).get('num_learners_completed','-'),)
+        #     csv_data.append(row)
+        # writer.writerows(csv_data)
+        generate_course_csv.delay(serializer.data)
+        return Response({"status":200})
 
     def retrieve(self, request, *args, **kwargs):
         pass
@@ -384,33 +386,34 @@ class ExportGeneralUserDataViewSet(GeneralUserDataViewSet):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
-        csv_data=list()
-        response=HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment;filename=users_data{}.csv'.format(datetime.now().strftime('%d_%m_%Y %H_%M'))
-        writer = csv.writer(response)
-        writer.writerow(("Full Name",
-        "Username",
-        "Mobile Number",
-        "State",
-        "City",
-        "DOB",
-        "Is Activated",
-        "Date Joined",
-        "Courses Enrolled In",
-        ))
-        for user in serializer.data:
-            row = (user.get('fullname', '-'),
-                   user.get('username', '-'),
-                   user.get('mobile_number', '-'),
-                   user.get('state'),
-                   user.get('city'),
-                   user.get('dob'),
-                   user.get('is_active','-'),
-                   user.get('date_joined','-'),
-                   len(user.get('courses',[])))
-            csv_data.append(row)
-        writer.writerows(csv_data)
-        return response
+        # csv_data=list()
+        # response=HttpResponse(content_type='text/csv')
+        # response['Content-Disposition'] = 'attachment;filename=users_data{}.csv'.format(datetime.now().strftime('%d_%m_%Y %H_%M'))
+        # writer = csv.writer(response)
+        # writer.writerow(("Full Name",
+        # "Username",
+        # "Mobile Number",
+        # "State",
+        # "City",
+        # "DOB",
+        # "Is Activated",
+        # "Date Joined",
+        # "Courses Enrolled In",
+        # ))
+        # for user in serializer.data:
+        #     row = (user.get('fullname', '-'),
+        #            user.get('username', '-'),
+        #            user.get('mobile_number', '-'),
+        #            user.get('state'),
+        #            user.get('city'),
+        #            user.get('dob'),
+        #            user.get('is_active','-'),
+        #            user.get('date_joined','-'),
+        #            len(user.get('courses',[])))
+        #     csv_data.append(row)
+        # writer.writerows(csv_data)
+        generate_usergeneral_csv.delay(serializer.data)
+        return Response({"status":200})
 
     def retrieve(self,request):
         pass

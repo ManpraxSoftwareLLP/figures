@@ -8,6 +8,7 @@ from django.conf.urls import include, url
 from rest_framework import routers
 
 from figures import views
+from figures import mx_views
 
 app_name = 'figures'
 
@@ -146,6 +147,8 @@ urlpatterns = [
     # Non-router API endpoints
     url(r'^api/general-site-metrics', views.GeneralSiteMetricsView.as_view(),
         name='general-site-metrics'),
+    url(r'^api/course_csv_files', mx_views.get_course_csv_file, name='course_csv_files'),
+    url(r'^api/user_csv_files', mx_views.get_userinfo_csv_file, name='course_csv_files'),
 ]
 
 # Include router endpoints

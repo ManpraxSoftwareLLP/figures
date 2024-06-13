@@ -38,6 +38,8 @@ class CoursesList extends Component {
       currentPage: 1,
       searchQuery: '',
       ordering: 'display_name',
+      downloadUrl: '',
+      downloadText: 'Generate a CSV from Current View',
     };
 
     this.getCourses = this.getCourses.bind(this);
@@ -110,6 +112,64 @@ class CoursesList extends Component {
   componentDidMount() {
     this.getCourses();
   }
+  getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = (cookies[i]).trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+      downloadCSV = () => {
+        this.setState({
+            downloadText: "Generating ...",
+            downloadUrl: '',
+        })
+        var rootUrl = apiConfig.ExportCoursesGeneral;
+
+        fetch(rootUrl, {
+            credentials: "same-origin",
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': this.getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(json=>{
+                if(json['status'] == 200){
+                  console.log("AAAAAAAAAAAAAAAAAAAAAAA")
+                    setTimeout(this.getCourseFiles(), 10000)
+                }
+            })
+    };
+
+    getCourseFiles = () => {
+        var rootUrl = `/figures/api/course_csv_files`;
+        fetch((rootUrl))
+            .then(response => response.json())
+            .then(json => {
+                if (json['status'] == 200) {
+                    if (json['file_url'] != '') {
+                        this.setState({
+                            downloadUrl: json['file_url'],
+                            fileStatus:json['file_status']
+                        })
+                    }
+                    if(json['file_status'] == 'pending'){
+                        setTimeout(this.getCourseFiles(), 10000)
+                    }
+                }
+            })
+    };
+
 
   render() {
 
@@ -216,7 +276,13 @@ class CoursesList extends Component {
             valueChangeFunction={this.setSearchQuery}
             inputPlaceholder='Search by course name, code or ID...'
           />
-            <button class={styles['export-csv-button']} onClick={() => window.location.href = `${apiConfig.ExportCoursesGeneral}`}>Generate a CSV from Current View</button>
+            {this.state.downloadUrl == '' && this.state.fileStatus !='pending' ?
+                            <button class={styles['export-csv-button']} onClick={this.state.downloadText != 'Generating ...'?this.downloadCSV:''}> {this.state.downloadText}</button> : this.state.fileStatus == 'pending'?
+                        <button class={styles['export-csv-button']} disabled>Generating ...</button>
+                                :
+                                <button class={styles['export-csv-button']}  onClick={() => window.open(this.state.downloadUrl, "_self")}>Download</button>
+                            }
+          
           {this.state.pages ? (
             <Paginator
               pageSwitchFunction={this.getCourses}
